@@ -94,7 +94,7 @@ const Checkout = ({
   const ConfirmationElement = () =>
     order ? <Confirmation order={order} /> : <Loader />;
 
-  console.log(order);
+  console.log(shoppingCart);
 
   return (
     <div>

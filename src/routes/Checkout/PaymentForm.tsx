@@ -5,7 +5,13 @@ import {
   CardElement,
   ElementsConsumer,
 } from '@stripe/react-stripe-js';
-import { loadStripe, Stripe, StripeElements } from '@stripe/stripe-js';
+import {
+  loadStripe,
+  Stripe,
+  StripeElements,
+  StripeError,
+} from '@stripe/stripe-js';
+import { useState } from 'react';
 import Review from './Review';
 
 const stripePromise = loadStripe(
@@ -30,6 +36,8 @@ const PaymentForm = ({
   ) => Promise<void>;
   onNext: () => void;
 }) => {
+  const [errorMessage, setErrorMessage] = useState<StripeError>();
+
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
     elements: StripeElements | null,
@@ -48,6 +56,7 @@ const PaymentForm = ({
 
     if (error) {
       console.log('[error]', error);
+      setErrorMessage(error);
     } else {
       const orderData = {
         line_items: checkoutToken?.live.line_items,
@@ -90,8 +99,20 @@ const PaymentForm = ({
             <ElementsConsumer>
               {({ elements, stripe }) => (
                 <form onSubmit={(e) => handleSubmit(e, elements, stripe)}>
-                  <CardElement className='p-10 ml-2' />
-                  <div className='flex justify-between flex-row px-12'>
+                  <CardElement className='p-10 pb-10 ml-2' />
+
+                  <span
+                    className={
+                      errorMessage?.message
+                        ? 'opacity-100 mx-12 p-3 bg-red-100 rounded-md  border border-width-1 border-red-300 text-gray-700'
+                        : 'opacity-0 mx-12 p-3 rounded-md border border-width-1 border-red-300 text-gray-700 transition-opacity duration-300'
+                    }
+                  >
+                    {errorMessage?.code === 'incorrect_number' &&
+                      'Card number is not correct'}
+                  </span>
+
+                  <div className='flex justify-between flex-row px-12 mt-10'>
                     <button
                       className='py-2 px-4 border border-transparent text-sm font-medium rounded-md text-black bg-gray-300 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
                       onClick={backStep}
