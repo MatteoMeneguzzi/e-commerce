@@ -14,7 +14,7 @@ const Products = ({
   return (
     <main>
       <div className='bg-white'>
-        <div className='max-w-2xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8'>
+        <div className='max-w-2xl mx-auto lg:max-w-7xl'>
           <div className='grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 sm:gap-x-20 lg:grid-cols-3 xl:gap-x-8 mb-20'>
             {products.map((product) => (
               <ProductElement

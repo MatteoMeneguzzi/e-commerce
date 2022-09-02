@@ -15,6 +15,9 @@ import Home from './routes/Home';
 import Checkout from './routes/Checkout/Checkout';
 import { CheckoutCaptureResponse } from '@chec/commerce.js/types/checkout-capture-response';
 import { CheckoutCapture } from '@chec/commerce.js/types/checkout-capture';
+import Layout from './components/Layout/Layout';
+import { ProductDetail } from './routes/Product/ProductDetail';
+import Login from './routes/Login/Login';
 
 function App() {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,6 +32,7 @@ function App() {
   });
   const [order, setOrder] = useState<CheckoutCaptureResponse>();
   const [errorMessage, setErrorMessage] = useState<Error>();
+  const [user, setUser] = useState<User>();
 
   const fetchProducts = async () => {
     try {
@@ -85,7 +89,6 @@ function App() {
       setOrder(incomingOrder);
       refreshCart();
     } catch (err: any) {
-      // setErrorMessage(err.data.error.message);
       console.log(err);
     }
   };
@@ -100,40 +103,68 @@ function App() {
   return (
     <div className='App'>
       <Router>
-        <Navbar
-          totalItems={shoppingCart.total_items}
-          showCart={showCart}
-          setShowCart={setShowCart}
-        />
         <Routes>
           <Route
             path='/'
             element={
-              <Home
-                products={products}
+              <Layout
+                totalItems={shoppingCart.total_items}
                 showCart={showCart}
                 setShowCart={setShowCart}
-                handleAddToCart={handleAddToCart}
-                shoppingCart={shoppingCart}
-                setShoppingCart={setShoppingCart}
               />
             }
-          />
-          <Route
-            path='/checkout'
-            element={
-              <Checkout
-                showCart={showCart}
-                setShowCart={setShowCart}
-                handleAddToCart={handleAddToCart}
-                shoppingCart={shoppingCart}
-                setShoppingCart={setShoppingCart}
-                order={order}
-                onCaptureCheckout={handleCaptureCheckout}
-                error={errorMessage}
-              />
-            }
-          />
+          >
+            <Route
+              index
+              element={
+                <Home
+                  products={products}
+                  showCart={showCart}
+                  setShowCart={setShowCart}
+                  handleAddToCart={handleAddToCart}
+                  shoppingCart={shoppingCart}
+                  setShoppingCart={setShoppingCart}
+                />
+              }
+            />
+            <Route
+              path='products/:productId'
+              element={
+                <ProductDetail
+                  products={products}
+                  handleAddToCart={handleAddToCart}
+                  showCart={showCart}
+                  setShowCart={setShowCart}
+                  setShoppingCart={setShoppingCart}
+                  shoppingCart={shoppingCart}
+                />
+              }
+            />
+            <Route
+              path='checkout'
+              element={
+                <Checkout
+                  showCart={showCart}
+                  setShowCart={setShowCart}
+                  handleAddToCart={handleAddToCart}
+                  shoppingCart={shoppingCart}
+                  setShoppingCart={setShoppingCart}
+                  order={order}
+                  onCaptureCheckout={handleCaptureCheckout}
+                  error={errorMessage}
+                />
+              }
+            />
+            <Route
+              path='*'
+              element={
+                <h2 className='text-2xl font-bold tracking-tight text-gray-900 py-16 px-8'>
+                  There's nothing here
+                </h2>
+              }
+            />
+          </Route>
+          <Route path='/login' element={<Login />} />
         </Routes>
         <Outlet />
       </Router>

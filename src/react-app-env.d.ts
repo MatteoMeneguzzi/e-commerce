@@ -11,3 +11,8 @@ interface ShippingData {
   shippingSubdivision: string;
   zip: string;
 }
+
+interface User {
+  username: string;
+  password: string;
+}

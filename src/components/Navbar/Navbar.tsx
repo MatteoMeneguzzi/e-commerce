@@ -1,7 +1,7 @@
 import { url } from 'inspector';
 import { MouseEvent, useState } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
-import { Cart } from '../../icons/Icons';
+import { Cart, Menu } from '../../icons/Icons';
 
 const links = [
   { id: '1', name: 'Dashboard', url: '' },
@@ -10,19 +10,17 @@ const links = [
 
 const Navbar = ({
   totalItems,
-  showCart,
   setShowCart,
 }: {
-  totalItems: number | undefined;
-  showCart: boolean;
-  setShowCart: (condition: boolean) => void;
+  totalItems?: number | undefined;
+  setShowCart?: (condition: boolean) => void;
 }) => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
-  const [showProfile, setShowProfile] = useState<boolean>(false);
+  // const [showProfile, setShowProfile] = useState<boolean>(false);
 
   return (
-    <div>
-      <nav className='bg-gray-800'>
+    <div className='relative mb-10'>
+      <nav className='bg-gray-800 fixed top-0 right-0 left-0 z-10'>
         <div className='max-w-7xl mx-auto px-2 sm:px-6 lg:px-8'>
           <div className='relative flex items-center justify-between h-16'>
             <div className='absolute inset-y-0 left-0 flex items-center sm:hidden'>
@@ -34,25 +32,11 @@ const Navbar = ({
                 aria-expanded='false'
                 onClick={() => {
                   setShowMenu(!showMenu);
-                  setShowProfile(false);
+                  // setShowProfile(false);
                 }}
               >
                 <span className='sr-only'>Open main menu</span>
-                <svg
-                  className='block h-6 w-6'
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth='2'
-                  stroke='currentColor'
-                  aria-hidden='true'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M4 6h16M4 12h16M4 18h16'
-                  />
-                </svg>
+                <Menu />
               </button>
             </div>
             {/* Logo */}
@@ -91,81 +75,83 @@ const Navbar = ({
 
             <div className='absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0'>
               {/* Cart Icon */}
-              <button
-                type='button'
-                className='bg-gray-800 mb-2 rounded-full text-gray-400 hover:text-white'
-                onClick={() => setShowCart(true)}
-              >
-                <span className='sr-only'>View notifications</span>
-                <div className='bg-yellow-400 text-black w-3 rounded-md text-xs relative top-2 left-4'>
-                  {totalItems}
-                </div>
-                <Cart />
-              </button>
-              {/* <!-- Profile dropdown --> */}
-              <div className='ml-3 relative'>
-                <div>
-                  <button
-                    type='button'
-                    className='bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white'
-                    id='user-menu-button'
-                    aria-expanded='false'
-                    aria-haspopup='true'
-                    onClick={() => {
-                      setShowProfile(!showProfile);
-                      setShowMenu(false);
-                    }}
-                  >
-                    <span className='sr-only'>Open user menu</span>
-                    <img
-                      className='h-8 w-8 rounded-full'
-                      src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-                      alt=''
-                    />
-                  </button>
-                </div>
-                {/* <!--  Dropdown menu   --> */}
-                <div
-                  className={
-                    showProfile
-                      ? 'origin-top-right hover:origin-top absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none'
-                      : 'hidden'
-                  }
-                  role='menu'
-                  aria-orientation='vertical'
-                  aria-labelledby='user-menu-button'
-                  tabIndex={-1}
+              {setShowCart && (
+                <button
+                  type='button'
+                  className='bg-gray-800 mb-2 rounded-full text-gray-400 hover:text-white px-2'
+                  onClick={() => setShowCart(true)}
                 >
-                  {/* <!-- Active: "bg-gray{-1}00", Not Active: "" --> */}
-                  <a
-                    href='#'
-                    className='block px-4 py-2 text-sm text-gray-700'
-                    role='menuitem'
-                    tabIndex={-1}
-                    id='user-menu-item-0'
-                  >
-                    Your Profile
-                  </a>
-                  <a
-                    href='#'
-                    className='block px-4 py-2 text-sm text-gray-700'
-                    role='menuitem'
-                    tabIndex={-1}
-                    id='user-menu-item-1'
-                  >
-                    Settings
-                  </a>
-                  <a
-                    href='#'
-                    className='block px-4 py-2 text-sm text-gray-700'
-                    role='menuitem'
-                    tabIndex={-1}
-                    id='user-menu-item-2'
-                  >
-                    Sign out
-                  </a>
-                </div>
-              </div>
+                  <span className='sr-only'>View notifications</span>
+                  <div className='bg-yellow-400 text-black w-3 rounded-md text-xs relative top-2 left-4'>
+                    {totalItems}
+                  </div>
+                  <Cart />
+                </button>
+              )}
+
+              {/* <!-- Profile dropdown --> */}
+              {/* <div className='ml-3 relative'> */}
+              {/* <div>
+                <button
+                  type='button'
+                  className='bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white'
+                  id='user-menu-button'
+                  aria-expanded='false'
+                  aria-haspopup='true'
+                  onClick={() => {
+                    setShowProfile(!showProfile);
+                    setShowMenu(false);
+                  }}
+                >
+                  <span className='sr-only'>Open user menu</span>
+                  <img
+                    className='h-8 w-8 rounded-full'
+                    src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+                    alt=''
+                  />
+                </button>
+              </div> */}
+              {/* <!--  Dropdown menu   --> */}
+              {/* <div
+                className={
+                  showProfile
+                    ? 'origin-top-right hover:origin-top absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none'
+                    : 'hidden'
+                }
+                role='menu'
+                aria-orientation='vertical'
+                aria-labelledby='user-menu-button'
+                tabIndex={-1}
+              >
+                <a
+                  href='#'
+                  className='block px-4 py-2 text-sm text-gray-700'
+                  role='menuitem'
+                  tabIndex={-1}
+                  id='user-menu-item-0'
+                >
+                  Your Profile
+                </a>
+                <a
+                  href='#'
+                  className='block px-4 py-2 text-sm text-gray-700'
+                  role='menuitem'
+                  tabIndex={-1}
+                  id='user-menu-item-1'
+                >
+                  Settings
+                </a>
+                <a
+                  href='#'
+                  className='block px-4 py-2 text-sm text-gray-700'
+                  role='menuitem'
+                  tabIndex={-1}
+                  id='user-menu-item-2'
+                >
+                  Sign out
+                </a>
+              </div> */}
+              {/* </div> */}
             </div>
           </div>
         </div>

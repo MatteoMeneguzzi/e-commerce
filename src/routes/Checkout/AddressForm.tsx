@@ -96,9 +96,9 @@ const AddressForm = ({
   }, [checkoutToken?.id, shippingCountry]);
 
   return (
-    <div className='mt-5 md:mt-0 md:col-span-2'>
+    <div className='mt-5 md:col-span-2'>
       <FormProvider {...methods}>
-        <h2 className='text-lg font-bold tracking-tight text-gray-900 pb-8 px-6'>
+        <h2 className='text-lg font-bold tracking-tight text-gray-900 pb-8'>
           Shipping Info
         </h2>
         <form
@@ -112,7 +112,7 @@ const AddressForm = ({
           )}
         >
           <div className='overflow-hidden sm:rounded-md'>
-            <div className='px-4 py-5 bg-white sm:p-6'>
+            <div className='py-5 bg-white'>
               <div className='grid grid-cols-6 gap-6'>
                 <FormInput
                   type='length-50'
