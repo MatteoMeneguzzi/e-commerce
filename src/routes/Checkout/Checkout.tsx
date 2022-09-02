@@ -1,7 +1,7 @@
 import { CartComponent } from '../../components';
 import { Cart } from '@chec/commerce.js/types/cart';
-import AddressForm from './AddressForm';
-import PaymentForm from './PaymentForm';
+import AddressForm from './Form/AddressForm';
+import PaymentForm from './Form/PaymentForm';
 import { useEffect, useState } from 'react';
 
 import commerce from '../../lib/commerce';
@@ -11,6 +11,7 @@ import { CheckoutCapture } from '@chec/commerce.js/types/checkout-capture';
 import Loader from '../../components/Loader/Loader';
 import { useNavigate } from 'react-router-dom';
 import Confirmation from './Form/Confirmation';
+import CartEmpty from './Form/CartEmpty';
 
 const Checkout = ({
   showCart,
@@ -20,7 +21,6 @@ const Checkout = ({
   setShoppingCart,
   order,
   onCaptureCheckout,
-  error,
 }: {
   showCart: boolean;
   setShowCart: (condition: boolean) => void;
@@ -69,7 +69,6 @@ const Checkout = ({
         if (activeStep !== 2) navigate('/');
       }
     };
-
     generateCheckoutToken();
   }, [activeStep, navigate, shoppingCart.id, shoppingCart.line_items?.length]);
 
@@ -88,13 +87,12 @@ const Checkout = ({
         backStep={backStep}
         onCaptureCheckout={onCaptureCheckout}
         onNext={nextStep}
+        setShoppingCart={setShoppingCart}
       />
     ) : null;
 
   const ConfirmationElement = () =>
     order ? <Confirmation order={order} /> : <Loader type='Processing...' />;
-
-  console.log(shoppingCart);
 
   return (
     <div className='max-w-7xl mx-auto px-2 sm:px-6 lg:px-8'>
@@ -103,8 +101,13 @@ const Checkout = ({
           Checkout
         </h2>
       </div>
-
-      {activeStep === 2 ? <ConfirmationElement /> : <Form />}
+      {shoppingCart.total_items === 0 ? (
+        <CartEmpty setShowCart={setShowCart} />
+      ) : activeStep === 2 ? (
+        <ConfirmationElement />
+      ) : (
+        <Form />
+      )}
 
       {showCart ? (
         <CartComponent

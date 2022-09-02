@@ -1,3 +1,4 @@
+import { Cart } from '@chec/commerce.js/types/cart';
 import { CheckoutCapture } from '@chec/commerce.js/types/checkout-capture';
 import { CheckoutToken } from '@chec/commerce.js/types/checkout-token';
 import {
@@ -12,7 +13,7 @@ import {
   StripeError,
 } from '@stripe/stripe-js';
 import { useState } from 'react';
-import Review from './Review';
+import Review from '../Review';
 
 const stripePromise = loadStripe(
   process.env.REACT_APP_STRIPE_PUBLIC_KEY || 'stripe public key not detected'
@@ -25,6 +26,7 @@ const PaymentForm = ({
   backStep,
   onCaptureCheckout,
   onNext,
+  setShoppingCart,
 }: {
   checkoutToken: CheckoutToken | undefined;
   shippingData: ShippingData;
@@ -35,6 +37,7 @@ const PaymentForm = ({
     newOrder: CheckoutCapture
   ) => Promise<void>;
   onNext: () => void;
+  setShoppingCart?: (cart: Cart) => void;
 }) => {
   const [errorMessage, setErrorMessage] = useState<StripeError>();
 
@@ -93,7 +96,10 @@ const PaymentForm = ({
   return (
     <>
       <div className='py-8 max-w-xl flex flex-col mx-auto'>
-        <Review checkoutToken={checkoutToken} />
+        <Review
+          checkoutToken={checkoutToken}
+          setShoppingCart={setShoppingCart}
+        />
         <div>
           <Elements stripe={stripePromise}>
             <ElementsConsumer>

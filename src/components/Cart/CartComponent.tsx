@@ -15,8 +15,6 @@ const CartComponent = ({
 }) => {
   let location = useLocation();
 
-  console.log(location);
-
   return (
     <div>
       <div

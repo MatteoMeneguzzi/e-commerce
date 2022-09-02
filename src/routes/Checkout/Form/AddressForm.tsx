@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import FormInput from './Form/FormInput';
+import FormInput from './FormInput';
 
-import commerce from '../../lib/commerce';
+import commerce from '../../../lib/commerce';
 import {
   LocaleListCountriesResponse,
   LocaleListSubdivisionsResponse,
@@ -170,10 +170,10 @@ const AddressForm = ({
                 />
               </div>
             </div>
-            <div className='px-4 py-3 text-right sm:px-6'>
+            <div className='py-3 text-right'>
               <button
                 type='submit'
-                className='inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                className='py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
               >
                 Next
               </button>
