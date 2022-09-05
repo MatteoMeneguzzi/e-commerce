@@ -71,6 +71,13 @@ const FormInput = ({
           <input
             type={name || 'text'}
             id={name}
+            pattern={
+              name === 'zip'
+                ? '[0-9]{5}'
+                : name === 'email'
+                ? '[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$'
+                : undefined
+            }
             className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-md sm:text-sm border-gray-300 rounded-md'
             required
             {...register(

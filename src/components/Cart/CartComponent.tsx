@@ -1,6 +1,7 @@
 import { Cart } from '@chec/commerce.js/types/cart';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { CloseIcon } from '../../icons/Icons';
 import ProductMiniature from '../Product/ProductMiniature';
 
 const CartComponent = ({
@@ -44,22 +45,7 @@ const CartComponent = ({
                         >
                           <span className='sr-only'>Close panel</span>
 
-                          <svg
-                            className='h-6 w-6'
-                            xmlns='http://www.w3.org/2000/svg'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            strokeWidth='2'
-                            stroke='currentColor'
-                            aria-hidden='true'
-                            onClick={() => setShowCart(false)}
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='M6 18L18 6M6 6l12 12'
-                            />
-                          </svg>
+                          <CloseIcon setShowCart={setShowCart} />
                         </button>
                       </div>
                     </div>
@@ -105,7 +91,9 @@ const CartComponent = ({
                     </p>
                     <div className='mt-6'>
                       <Link
-                        to={location.pathname === '/checkout' ? '' : 'checkout'}
+                        to={
+                          location.pathname === '/checkout' ? {} : '/checkout'
+                        }
                         className='flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700'
                         onClick={() => setShowCart(false)}
                       >

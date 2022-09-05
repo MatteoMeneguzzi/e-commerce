@@ -1,22 +1,47 @@
+import { CheckoutCaptureResponse } from '@chec/commerce.js/types/checkout-capture-response';
 import { useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
-import { Cart } from '../../icons/Icons';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Cart, Menu } from '../../icons/Icons';
+
+const links = [
+  { id: '1', name: 'Dashboard', url: '' },
+  { id: '2', name: 'Checkout', url: 'checkout' },
+];
 
 const Navbar = ({
   totalItems,
-  showCart,
   setShowCart,
+  setUser,
+  order,
+  setOrder,
 }: {
-  totalItems: number | undefined;
-  showCart: boolean;
-  setShowCart: (condition: boolean) => void;
+  totalItems?: number | undefined;
+  setShowCart?: (condition: boolean) => void;
+  user?: User | undefined;
+  setUser?: (user: User | undefined) => void;
+  order?: CheckoutCaptureResponse | undefined;
+  setOrder?: (order: CheckoutCaptureResponse | undefined) => void;
 }) => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [showProfile, setShowProfile] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  const location = useLocation();
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+
+    let currentUser = localStorage.getItem('user');
+
+    if (!currentUser && setUser) {
+      setUser(undefined);
+      navigate('/login');
+    }
+  };
 
   return (
-    <div>
-      <nav className='bg-gray-800'>
+    <div className='relative mb-10'>
+      <nav className='bg-gray-800 fixed top-0 right-0 left-0 z-10'>
         <div className='max-w-7xl mx-auto px-2 sm:px-6 lg:px-8'>
           <div className='relative flex items-center justify-between h-16'>
             <div className='absolute inset-y-0 left-0 flex items-center sm:hidden'>
@@ -28,52 +53,14 @@ const Navbar = ({
                 aria-expanded='false'
                 onClick={() => {
                   setShowMenu(!showMenu);
-                  setShowProfile(false);
+                  // setShowProfile(false);
                 }}
               >
                 <span className='sr-only'>Open main menu</span>
-                {/* <!--
-              Icon when menu is closed.
-              Heroicon name: outline/menu
-              Menu open: "hidden", Menu closed: "block"
-            --> */}
-                <svg
-                  className='block h-6 w-6'
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth='2'
-                  stroke='currentColor'
-                  aria-hidden='true'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M4 6h16M4 12h16M4 18h16'
-                  />
-                </svg>
-                {/* <!--
-              Icon when menu is open.
-              Heroicon name: outline/x
-              Menu open: "block", Menu closed: "hidden"
-            --> */}
-                <svg
-                  className='hidden h-6 w-6'
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth='2'
-                  stroke='currentColor'
-                  aria-hidden='true'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M6 18L18 6M6 6l12 12'
-                  />
-                </svg>
+                <Menu />
               </button>
             </div>
+            {/* Logo */}
             <div className='flex-1 flex items-center justify-center sm:items-stretch sm:justify-start'>
               <div className='flex-shrink-0 flex items-center'>
                 <img
@@ -87,37 +74,65 @@ const Navbar = ({
                   alt='Workflow'
                 />
               </div>
+              {/* NavLinks */}
               <div className='hidden sm:block sm:ml-6'>
                 <div className='flex space-x-4'>
-                  {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
-                  <Link
-                    to='/'
-                    className='bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium'
-                    aria-current='page'
-                  >
-                    Dashboard
-                  </Link>
-                  <Link
-                    to='checkout'
-                    className='text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium'
-                  >
-                    Checkout
-                  </Link>{' '}
+                  {links.map((link) => {
+                    if (
+                      order &&
+                      location.pathname === '/checkout' &&
+                      setOrder
+                    ) {
+                      return (
+                        <NavLink
+                          to={`/${link.url}`}
+                          className={({ isActive }) =>
+                            isActive
+                              ? 'bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium'
+                              : 'bg-transparent text-white px-3 py-2 rounded-md text-sm font-medium'
+                          }
+                          key={link.id}
+                          onClick={() => setOrder(undefined)}
+                        >
+                          {link.name}
+                        </NavLink>
+                      );
+                    } else {
+                      return (
+                        <NavLink
+                          to={`/${link.url}`}
+                          className={({ isActive }) =>
+                            isActive
+                              ? 'bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium'
+                              : 'bg-transparent text-white px-3 py-2 rounded-md text-sm font-medium'
+                          }
+                          key={link.id}
+                        >
+                          {link.name}
+                        </NavLink>
+                      );
+                    }
+                  })}
                 </div>
               </div>
             </div>
+
             <div className='absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0'>
-              <button
-                type='button'
-                className='bg-gray-800 mb-2 rounded-full text-gray-400 hover:text-white'
-                onClick={() => setShowCart(true)}
-              >
-                <span className='sr-only'>View notifications</span>
-                <div className='bg-yellow-400 text-black w-3 rounded-md text-xs relative top-2 left-4'>
-                  {totalItems}
-                </div>
-                <Cart />
-              </button>
+              {/* Cart Icon */}
+              {setShowCart && (
+                <button
+                  type='button'
+                  className='bg-gray-800 mb-2 rounded-full text-gray-400 hover:text-white px-2'
+                  onClick={() => setShowCart(true)}
+                >
+                  <span className='sr-only'>View notifications</span>
+                  <div className='bg-yellow-400 text-black w-3 rounded-md text-xs relative top-2 left-4'>
+                    {totalItems}
+                  </div>
+                  <Cart />
+                </button>
+              )}
+
               {/* <!-- Profile dropdown --> */}
               <div className='ml-3 relative'>
                 <div>
@@ -140,15 +155,7 @@ const Navbar = ({
                     />
                   </button>
                 </div>
-                {/* <!--
-              Dropdown menu, show/hide based on menu state.
-              Entering: "transition ease-out duration-100"
-                From: "transform opacity-0 scale-95"
-                To: "transform opacity-100 scale-100"
-              Leaving: "transition ease-in duration-75"
-                From: "transform opacity-100 scale-100"
-                To: "transform opacity-0 scale-95"
-            --> */}
+                {/* <!--  Dropdown menu   --> */}
                 <div
                   className={
                     showProfile
@@ -160,8 +167,7 @@ const Navbar = ({
                   aria-labelledby='user-menu-button'
                   tabIndex={-1}
                 >
-                  {/* <!-- Active: "bg-gray{-1}00", Not Active: "" --> */}
-                  <a
+                  {/* <a
                     href='#'
                     className='block px-4 py-2 text-sm text-gray-700'
                     role='menuitem'
@@ -178,16 +184,16 @@ const Navbar = ({
                     id='user-menu-item-1'
                   >
                     Settings
-                  </a>
-                  <a
-                    href='#'
+                  </a> */}
+                  <button
                     className='block px-4 py-2 text-sm text-gray-700'
                     role='menuitem'
                     tabIndex={-1}
                     id='user-menu-item-2'
+                    onClick={handleLogout}
                   >
                     Sign out
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
@@ -196,26 +202,22 @@ const Navbar = ({
         {/* <!-- Mobile menu, show/hide based on menu state. --> */}
         <div className={showMenu ? 'sm:hidden' : 'hidden'} id='mobile-menu'>
           <div className='px-2 pt-2 pb-3 space-y-1'>
-            {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
-            <Link
-              to='/'
-              className='bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium'
-              aria-current='page'
-              onClick={() => {
-                setShowMenu(!showMenu);
-              }}
-            >
-              Dashboard
-            </Link>
-            <Link
-              to='checkout'
-              className='text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium'
-              onClick={() => {
-                setShowMenu(!showMenu);
-              }}
-            >
-              Checkout
-            </Link>
+            {links.map((link) => (
+              <NavLink
+                to={link.url}
+                className={({ isActive }) =>
+                  isActive
+                    ? 'bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium'
+                    : 'text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium'
+                }
+                onClick={() => {
+                  setShowMenu(!showMenu);
+                }}
+                key={link.id}
+              >
+                {link.name}
+              </NavLink>
+            ))}
           </div>
         </div>
       </nav>

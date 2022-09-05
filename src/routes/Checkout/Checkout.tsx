@@ -1,7 +1,7 @@
 import { CartComponent } from '../../components';
 import { Cart } from '@chec/commerce.js/types/cart';
-import AddressForm from './AddressForm';
-import PaymentForm from './PaymentForm';
+import AddressForm from './Form/AddressForm';
+import PaymentForm from './Form/PaymentForm';
 import { useEffect, useState } from 'react';
 
 import commerce from '../../lib/commerce';
@@ -11,6 +11,7 @@ import { CheckoutCapture } from '@chec/commerce.js/types/checkout-capture';
 import Loader from '../../components/Loader/Loader';
 import { useNavigate } from 'react-router-dom';
 import Confirmation from './Form/Confirmation';
+import CartEmpty from './Form/CartEmpty';
 
 const Checkout = ({
   showCart,
@@ -19,8 +20,10 @@ const Checkout = ({
   shoppingCart,
   setShoppingCart,
   order,
+  setOrder,
   onCaptureCheckout,
-  error,
+  errorMessage,
+  setErrorMessage,
 }: {
   showCart: boolean;
   setShowCart: (condition: boolean) => void;
@@ -31,11 +34,13 @@ const Checkout = ({
   shoppingCart: Cart;
   setShoppingCart: (cart: Cart) => void;
   order: CheckoutCaptureResponse | undefined;
+  setOrder: (order: CheckoutCaptureResponse | undefined) => void;
   onCaptureCheckout: (
     checkoutTokenId: string,
     newOrder: CheckoutCapture
   ) => Promise<void>;
-  error: Error | undefined;
+  errorMessage: string | undefined;
+  setErrorMessage: (error: string) => void;
 }) => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [checkoutToken, setCheckoutToken] = useState<CheckoutToken>();
@@ -69,7 +74,6 @@ const Checkout = ({
         if (activeStep !== 2) navigate('/');
       }
     };
-
     generateCheckoutToken();
   }, [activeStep, navigate, shoppingCart.id, shoppingCart.line_items?.length]);
 
@@ -88,22 +92,38 @@ const Checkout = ({
         backStep={backStep}
         onCaptureCheckout={onCaptureCheckout}
         onNext={nextStep}
+        setShoppingCart={setShoppingCart}
       />
     ) : null;
 
   const ConfirmationElement = () =>
-    order ? <Confirmation order={order} /> : <Loader />;
+    order ? (
+      <Confirmation
+        order={order}
+        setOrder={setOrder}
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+      />
+    ) : errorMessage ? (
+      <Confirmation
+        order={order}
+        setOrder={setOrder}
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+      />
+    ) : (
+      <Loader type='Processing...' />
+    );
 
   console.log(order);
 
   return (
-    <div>
+    <div className='max-w-7xl mx-auto px-2 sm:px-6 lg:px-8'>
       <div className='flex'>
-        <h2 className='text-2xl font-bold tracking-tight text-gray-900 pt-16 p-8'>
+        <h2 className='text-2xl font-bold tracking-tight text-gray-900 pt-16'>
           Checkout
         </h2>
       </div>
-
       {activeStep === 2 ? <ConfirmationElement /> : <Form />}
 
       {showCart ? (

@@ -10,11 +10,15 @@ import {
   Routes,
   Route,
   Outlet,
+  useNavigate,
 } from 'react-router-dom';
 import Home from './routes/Home';
 import Checkout from './routes/Checkout/Checkout';
 import { CheckoutCaptureResponse } from '@chec/commerce.js/types/checkout-capture-response';
 import { CheckoutCapture } from '@chec/commerce.js/types/checkout-capture';
+import Layout from './components/Layout/Layout';
+import { ProductDetail } from './routes/Product/ProductDetail';
+import Login from './routes/Login/Login';
 
 function App() {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +32,9 @@ function App() {
     total_unique_items: 0,
   });
   const [order, setOrder] = useState<CheckoutCaptureResponse>();
-  const [errorMessage, setErrorMessage] = useState<Error>();
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [user, setUser] = useState<User>();
+  const navigate = useNavigate();
 
   const fetchProducts = async () => {
     try {
@@ -85,29 +91,44 @@ function App() {
       setOrder(incomingOrder);
       refreshCart();
     } catch (err: any) {
-      // setErrorMessage(err.data.error.message);
       console.log(err);
+      setErrorMessage(err.data.error.message);
     }
   };
 
   useEffect(() => {
-    setIsLoading(true);
-    fetchProducts();
-    fetchCart();
-    setIsLoading(false);
-  }, []);
+    let currentUser = localStorage.getItem('user');
+
+    if (currentUser) {
+      setIsLoading(true);
+      fetchProducts();
+      fetchCart();
+      setIsLoading(false);
+    } else {
+      navigate('/login');
+    }
+  }, [navigate]);
+
+  console.log(order);
 
   return (
     <div className='App'>
-      <Router>
-        <Navbar
-          totalItems={shoppingCart.total_items}
-          showCart={showCart}
-          setShowCart={setShowCart}
-        />
-        <Routes>
+      <Routes>
+        <Route
+          path='/'
+          element={
+            <Layout
+              totalItems={shoppingCart.total_items}
+              setShowCart={setShowCart}
+              user={user}
+              setUser={setUser}
+              order={order}
+              setOrder={setOrder}
+            />
+          }
+        >
           <Route
-            path='/'
+            index
             element={
               <Home
                 products={products}
@@ -120,7 +141,20 @@ function App() {
             }
           />
           <Route
-            path='/checkout'
+            path='products/:productId'
+            element={
+              <ProductDetail
+                products={products}
+                handleAddToCart={handleAddToCart}
+                showCart={showCart}
+                setShowCart={setShowCart}
+                setShoppingCart={setShoppingCart}
+                shoppingCart={shoppingCart}
+              />
+            }
+          />
+          <Route
+            path='checkout'
             element={
               <Checkout
                 showCart={showCart}
@@ -129,14 +163,28 @@ function App() {
                 shoppingCart={shoppingCart}
                 setShoppingCart={setShoppingCart}
                 order={order}
+                setOrder={setOrder}
                 onCaptureCheckout={handleCaptureCheckout}
-                error={errorMessage}
+                errorMessage={errorMessage}
+                setErrorMessage={setErrorMessage}
               />
             }
           />
-        </Routes>
-        <Outlet />
-      </Router>
+          <Route
+            path='*'
+            element={
+              <h2 className='text-2xl font-bold tracking-tight text-gray-900 py-16 px-8'>
+                There's nothing here
+              </h2>
+            }
+          />
+        </Route>
+        <Route
+          path='/login'
+          element={<Login user={user} setUser={setUser} />}
+        />
+      </Routes>
+      <Outlet />
     </div>
   );
 }

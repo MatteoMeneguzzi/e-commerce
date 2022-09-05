@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import FormInput from './Form/FormInput';
+import FormInput from './FormInput';
 
-import commerce from '../../lib/commerce';
+import commerce from '../../../lib/commerce';
 import {
   LocaleListCountriesResponse,
   LocaleListSubdivisionsResponse,
@@ -96,9 +96,9 @@ const AddressForm = ({
   }, [checkoutToken?.id, shippingCountry]);
 
   return (
-    <div className='mt-5 md:mt-0 md:col-span-2'>
+    <div className='mt-5 md:col-span-2'>
       <FormProvider {...methods}>
-        <h2 className='text-lg font-bold tracking-tight text-gray-900 pb-8 px-6'>
+        <h2 className='text-lg font-bold tracking-tight text-gray-900 pb-8'>
           Shipping Info
         </h2>
         <form
@@ -112,7 +112,7 @@ const AddressForm = ({
           )}
         >
           <div className='overflow-hidden sm:rounded-md'>
-            <div className='px-4 py-5 bg-white sm:p-6'>
+            <div className='py-5 bg-white'>
               <div className='grid grid-cols-6 gap-6'>
                 <FormInput
                   type='length-50'
@@ -170,10 +170,10 @@ const AddressForm = ({
                 />
               </div>
             </div>
-            <div className='px-4 py-3 text-right sm:px-6'>
+            <div className='py-3 text-right'>
               <button
                 type='submit'
-                className='inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                className='py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
               >
                 Next
               </button>
