@@ -126,31 +126,11 @@ const ProductMiniature = ({
             <div className='flex flex-1 items-end justify-between text-sm'>
               <p className='text-gray-500 flex space-x-2 items-center'>
                 <span>Qty:</span>
-                <button
-                  className='text-gray-500 text-2xl mb-0.5 active:text-yellow-500'
-                  onClick={() => handleUpdateCartQty('-')}
-                >
-                  -
-                </button>
+
                 <span className='text-gray-900 text-base'>
                   {productReview?.quantity}
                 </span>
-                <button
-                  className='text-gray-500 text-xl active:text-yellow-500'
-                  onClick={() => handleUpdateCartQty('+')}
-                >
-                  +
-                </button>
               </p>
-              <div className='flex'>
-                <button
-                  type='button'
-                  className='font-medium text-indigo-600 hover:text-indigo-500'
-                  onClick={removeProduct}
-                >
-                  Remove
-                </button>
-              </div>
             </div>
           </div>
         </li>

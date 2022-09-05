@@ -5,7 +5,7 @@ const Loader = ({ type }: { type: string }) => {
   return (
     <>
       {type === 'Processing...' ? (
-        <div className='flex justify-center absolute items-center top-0 bottom-0 w-full'>
+        <div className='flex justify-center absolute items-center top-0 bottom-0 left-0 w-full'>
           <button
             disabled
             type='button'

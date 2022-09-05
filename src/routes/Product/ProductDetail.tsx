@@ -54,12 +54,12 @@ export const ProductDetail = ({
       </h2>
       {product ? (
         <>
-          <div className='group relative my-10'>
+          <div className='group relative my-10 max-w-lg mx-auto'>
             <div className='h-80 w-60 bg-white-500 rounded-md overflow-hidden group-hover:opacity-75 mx-auto'>
               <img
                 src={`${product?.assets[0].url}`}
                 alt={product?.name}
-                className='bg-cover z-0'
+                className='bg-cover z-0 w-56'
               />
             </div>
           </div>
@@ -72,7 +72,7 @@ export const ProductDetail = ({
               <p className='mt-1 text-sm text-gray-500'>{result}</p>
             </div>
 
-            <div className='flex justify-between mx-16 sm:mx-0 flex-1 mb-2 items-center'>
+            <div className='flex justify-between mx-16 sm:mx-0 flex-1 my-8 items-center'>
               <p className='text-sm font-medium text-gray-900'>
                 Price: {product?.price.formatted_with_symbol}
               </p>

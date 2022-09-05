@@ -20,7 +20,10 @@ const Checkout = ({
   shoppingCart,
   setShoppingCart,
   order,
+  setOrder,
   onCaptureCheckout,
+  errorMessage,
+  setErrorMessage,
 }: {
   showCart: boolean;
   setShowCart: (condition: boolean) => void;
@@ -31,11 +34,13 @@ const Checkout = ({
   shoppingCart: Cart;
   setShoppingCart: (cart: Cart) => void;
   order: CheckoutCaptureResponse | undefined;
+  setOrder: (order: CheckoutCaptureResponse | undefined) => void;
   onCaptureCheckout: (
     checkoutTokenId: string,
     newOrder: CheckoutCapture
   ) => Promise<void>;
-  error: Error | undefined;
+  errorMessage: string | undefined;
+  setErrorMessage: (error: string) => void;
 }) => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [checkoutToken, setCheckoutToken] = useState<CheckoutToken>();
@@ -92,7 +97,25 @@ const Checkout = ({
     ) : null;
 
   const ConfirmationElement = () =>
-    order ? <Confirmation order={order} /> : <Loader type='Processing...' />;
+    order ? (
+      <Confirmation
+        order={order}
+        setOrder={setOrder}
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+      />
+    ) : errorMessage ? (
+      <Confirmation
+        order={order}
+        setOrder={setOrder}
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+      />
+    ) : (
+      <Loader type='Processing...' />
+    );
+
+  console.log(order);
 
   return (
     <div className='max-w-7xl mx-auto px-2 sm:px-6 lg:px-8'>
@@ -101,13 +124,7 @@ const Checkout = ({
           Checkout
         </h2>
       </div>
-      {shoppingCart.total_items === 0 ? (
-        <CartEmpty setShowCart={setShowCart} />
-      ) : activeStep === 2 ? (
-        <ConfirmationElement />
-      ) : (
-        <Form />
-      )}
+      {activeStep === 2 ? <ConfirmationElement /> : <Form />}
 
       {showCart ? (
         <CartComponent

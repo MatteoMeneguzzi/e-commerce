@@ -10,6 +10,7 @@ import {
   Routes,
   Route,
   Outlet,
+  useNavigate,
 } from 'react-router-dom';
 import Home from './routes/Home';
 import Checkout from './routes/Checkout/Checkout';
@@ -31,8 +32,9 @@ function App() {
     total_unique_items: 0,
   });
   const [order, setOrder] = useState<CheckoutCaptureResponse>();
-  const [errorMessage, setErrorMessage] = useState<Error>();
+  const [errorMessage, setErrorMessage] = useState<string>();
   const [user, setUser] = useState<User>();
+  const navigate = useNavigate();
 
   const fetchProducts = async () => {
     try {
@@ -90,84 +92,99 @@ function App() {
       refreshCart();
     } catch (err: any) {
       console.log(err);
+      setErrorMessage(err.data.error.message);
     }
   };
 
   useEffect(() => {
-    setIsLoading(true);
-    fetchProducts();
-    fetchCart();
-    setIsLoading(false);
-  }, []);
+    let currentUser = localStorage.getItem('user');
+
+    if (currentUser) {
+      setIsLoading(true);
+      fetchProducts();
+      fetchCart();
+      setIsLoading(false);
+    } else {
+      navigate('/login');
+    }
+  }, [navigate]);
+
+  console.log(order);
 
   return (
     <div className='App'>
-      <Router>
-        <Routes>
+      <Routes>
+        <Route
+          path='/'
+          element={
+            <Layout
+              totalItems={shoppingCart.total_items}
+              setShowCart={setShowCart}
+              user={user}
+              setUser={setUser}
+              order={order}
+              setOrder={setOrder}
+            />
+          }
+        >
           <Route
-            path='/'
+            index
             element={
-              <Layout
-                totalItems={shoppingCart.total_items}
+              <Home
+                products={products}
                 showCart={showCart}
                 setShowCart={setShowCart}
+                handleAddToCart={handleAddToCart}
+                shoppingCart={shoppingCart}
+                setShoppingCart={setShoppingCart}
               />
             }
-          >
-            <Route
-              index
-              element={
-                <Home
-                  products={products}
-                  showCart={showCart}
-                  setShowCart={setShowCart}
-                  handleAddToCart={handleAddToCart}
-                  shoppingCart={shoppingCart}
-                  setShoppingCart={setShoppingCart}
-                />
-              }
-            />
-            <Route
-              path='products/:productId'
-              element={
-                <ProductDetail
-                  products={products}
-                  handleAddToCart={handleAddToCart}
-                  showCart={showCart}
-                  setShowCart={setShowCart}
-                  setShoppingCart={setShoppingCart}
-                  shoppingCart={shoppingCart}
-                />
-              }
-            />
-            <Route
-              path='checkout'
-              element={
-                <Checkout
-                  showCart={showCart}
-                  setShowCart={setShowCart}
-                  handleAddToCart={handleAddToCart}
-                  shoppingCart={shoppingCart}
-                  setShoppingCart={setShoppingCart}
-                  order={order}
-                  onCaptureCheckout={handleCaptureCheckout}
-                  error={errorMessage}
-                />
-              }
-            />
-            <Route
-              path='*'
-              element={
-                <h2 className='text-2xl font-bold tracking-tight text-gray-900 py-16 px-8'>
-                  There's nothing here
-                </h2>
-              }
-            />
-          </Route>
-          <Route path='/login' element={<Login />} />
-        </Routes>
-        <Outlet />
-      </Router>
+          />
+          <Route
+            path='products/:productId'
+            element={
+              <ProductDetail
+                products={products}
+                handleAddToCart={handleAddToCart}
+                showCart={showCart}
+                setShowCart={setShowCart}
+                setShoppingCart={setShoppingCart}
+                shoppingCart={shoppingCart}
+              />
+            }
+          />
+          <Route
+            path='checkout'
+            element={
+              <Checkout
+                showCart={showCart}
+                setShowCart={setShowCart}
+                handleAddToCart={handleAddToCart}
+                shoppingCart={shoppingCart}
+                setShoppingCart={setShoppingCart}
+                order={order}
+                setOrder={setOrder}
+                onCaptureCheckout={handleCaptureCheckout}
+                errorMessage={errorMessage}
+                setErrorMessage={setErrorMessage}
+              />
+            }
+          />
+          <Route
+            path='*'
+            element={
+              <h2 className='text-2xl font-bold tracking-tight text-gray-900 py-16 px-8'>
+                There's nothing here
+              </h2>
+            }
+          />
+        </Route>
+        <Route
+          path='/login'
+          element={<Login user={user} setUser={setUser} />}
+        />
+      </Routes>
+      <Outlet />
     </div>
   );
 }

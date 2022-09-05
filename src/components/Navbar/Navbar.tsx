@@ -1,6 +1,6 @@
-import { url } from 'inspector';
-import { MouseEvent, useState } from 'react';
-import { Link, NavLink, Outlet } from 'react-router-dom';
+import { CheckoutCaptureResponse } from '@chec/commerce.js/types/checkout-capture-response';
+import { useState } from 'react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Cart, Menu } from '../../icons/Icons';
 
 const links = [
@@ -11,12 +11,33 @@ const links = [
 const Navbar = ({
   totalItems,
   setShowCart,
+  setUser,
+  order,
+  setOrder,
 }: {
   totalItems?: number | undefined;
   setShowCart?: (condition: boolean) => void;
+  user?: User | undefined;
+  setUser?: (user: User | undefined) => void;
+  order?: CheckoutCaptureResponse | undefined;
+  setOrder?: (order: CheckoutCaptureResponse | undefined) => void;
 }) => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
-  // const [showProfile, setShowProfile] = useState<boolean>(false);
+  const [showProfile, setShowProfile] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  const location = useLocation();
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+
+    let currentUser = localStorage.getItem('user');
+
+    if (!currentUser && setUser) {
+      setUser(undefined);
+      navigate('/login');
+    }
+  };
 
   return (
     <div className='relative mb-10'>
@@ -56,19 +77,42 @@ const Navbar = ({
               {/* NavLinks */}
               <div className='hidden sm:block sm:ml-6'>
                 <div className='flex space-x-4'>
-                  {links.map((link) => (
-                    <NavLink
-                      to={`/${link.url}`}
-                      className={({ isActive }) =>
-                        isActive
-                          ? 'bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium'
-                          : 'bg-transparent text-white px-3 py-2 rounded-md text-sm font-medium'
-                      }
-                      key={link.id}
-                    >
-                      {link.name}
-                    </NavLink>
-                  ))}
+                  {links.map((link) => {
+                    if (
+                      order &&
+                      location.pathname === '/checkout' &&
+                      setOrder
+                    ) {
+                      return (
+                        <NavLink
+                          to={`/${link.url}`}
+                          className={({ isActive }) =>
+                            isActive
+                              ? 'bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium'
+                              : 'bg-transparent text-white px-3 py-2 rounded-md text-sm font-medium'
+                          }
+                          key={link.id}
+                          onClick={() => setOrder(undefined)}
+                        >
+                          {link.name}
+                        </NavLink>
+                      );
+                    } else {
+                      return (
+                        <NavLink
+                          to={`/${link.url}`}
+                          className={({ isActive }) =>
+                            isActive
+                              ? 'bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium'
+                              : 'bg-transparent text-white px-3 py-2 rounded-md text-sm font-medium'
+                          }
+                          key={link.id}
+                        >
+                          {link.name}
+                        </NavLink>
+                      );
+                    }
+                  })}
                 </div>
               </div>
             </div>
@@ -90,68 +134,68 @@ const Navbar = ({
               )}
 
               {/* <!-- Profile dropdown --> */}
-              {/* <div className='ml-3 relative'> */}
-              {/* <div>
-                <button
-                  type='button'
-                  className='bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white'
-                  id='user-menu-button'
-                  aria-expanded='false'
-                  aria-haspopup='true'
-                  onClick={() => {
-                    setShowProfile(!showProfile);
-                    setShowMenu(false);
-                  }}
-                >
-                  <span className='sr-only'>Open user menu</span>
-                  <img
-                    className='h-8 w-8 rounded-full'
-                    src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-                    alt=''
-                  />
-                </button>
-              </div> */}
-              {/* <!--  Dropdown menu   --> */}
-              {/* <div
-                className={
-                  showProfile
-                    ? 'origin-top-right hover:origin-top absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none'
-                    : 'hidden'
-                }
-                role='menu'
-                aria-orientation='vertical'
-                aria-labelledby='user-menu-button'
-                tabIndex={-1}
-              >
-                <a
-                  href='#'
-                  className='block px-4 py-2 text-sm text-gray-700'
-                  role='menuitem'
+              <div className='ml-3 relative'>
+                <div>
+                  <button
+                    type='button'
+                    className='bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white'
+                    id='user-menu-button'
+                    aria-expanded='false'
+                    aria-haspopup='true'
+                    onClick={() => {
+                      setShowProfile(!showProfile);
+                      setShowMenu(false);
+                    }}
+                  >
+                    <span className='sr-only'>Open user menu</span>
+                    <img
+                      className='h-8 w-8 rounded-full'
+                      src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+                      alt=''
+                    />
+                  </button>
+                </div>
+                {/* <!--  Dropdown menu   --> */}
+                <div
+                  className={
+                    showProfile
+                      ? 'origin-top-right hover:origin-top absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none'
+                      : 'hidden'
+                  }
+                  role='menu'
+                  aria-orientation='vertical'
+                  aria-labelledby='user-menu-button'
                   tabIndex={-1}
-                  id='user-menu-item-0'
                 >
-                  Your Profile
-                </a>
-                <a
-                  href='#'
-                  className='block px-4 py-2 text-sm text-gray-700'
-                  role='menuitem'
-                  tabIndex={-1}
-                  id='user-menu-item-1'
-                >
-                  Settings
-                </a>
-                <a
-                  href='#'
-                  className='block px-4 py-2 text-sm text-gray-700'
-                  role='menuitem'
-                  tabIndex={-1}
-                  id='user-menu-item-2'
-                >
-                  Sign out
-                </a>
-              </div> */}
-              {/* </div> */}
+                  {/* <a
+                    href='#'
+                    className='block px-4 py-2 text-sm text-gray-700'
+                    role='menuitem'
+                    tabIndex={-1}
+                    id='user-menu-item-0'
+                  >
+                    Your Profile
+                  </a>
+                  <a
+                    href='#'
+                    className='block px-4 py-2 text-sm text-gray-700'
+                    role='menuitem'
+                    tabIndex={-1}
+                    id='user-menu-item-1'
+                  >
+                    Settings
+                  </a> */}
+                  <button
+                    className='block px-4 py-2 text-sm text-gray-700'
+                    role='menuitem'
+                    tabIndex={-1}
+                    id='user-menu-item-2'
+                    onClick={handleLogout}
+                  >
+                    Sign out
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

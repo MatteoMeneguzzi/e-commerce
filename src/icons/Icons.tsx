@@ -80,9 +80,9 @@ export const Lock = () => {
       aria-hidden='true'
     >
       <path
-        fill-rule='evenodd'
+        fillRule='evenodd'
         d='M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z'
-        clip-rule='evenodd'
+        clipRule='evenodd'
       />
     </svg>
   );
@@ -170,6 +170,26 @@ export const CloseIcon = ({
         strokeLinecap='round'
         strokeLinejoin='round'
         d='M6 18L18 6M6 6l12 12'
+      />
+    </svg>
+  );
+};
+
+export const ErrorIcon = () => {
+  return (
+    <svg
+      className='h-6 w-6 text-red-600'
+      xmlns='http://www.w3.org/2000/svg'
+      fill='none'
+      viewBox='0 0 24 24'
+      strokeWidth='1.5'
+      stroke='currentColor'
+      aria-hidden='true'
+    >
+      <path
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        d='M12 10.5v3.75m-9.303 3.376C1.83 19.126 2.914 21 4.645 21h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 4.88c-.866-1.501-3.032-1.501-3.898 0L2.697 17.626zM12 17.25h.007v.008H12v-.008z'
       />
     </svg>
   );
